@@ -1,32 +1,13 @@
 <?php
-/**
- * Inicia sesión de usuario según los datos proporcionados y redirige según el resultado.
- * 
- * Este script inicia sesión de usuario mediante el uso de datos recibidos por POST (nombre de usuario y contraseña).
- * Verifica la conexión a la base de datos, protege contra inyecciones SQL utilizando real_escape_string,
- * y ejecuta una consulta para verificar la existencia del usuario en la base de datos.
- * Si el usuario existe, se inicia una sesión y se redirige a la sección especificada o a una por defecto.
- * En caso contrario, se redirige a una página de inicio de sesión con mensaje de error.
- * 
- * Variables POST esperadas:
- * - $_POST['username']: Nombre de usuario para autenticación.
- * - $_POST['password']: Contraseña asociada al nombre de usuario.
- * - $_POST['seccion']: Sección a la que redirigir después del inicio de sesión (opcional, por defecto 'seccion1').
- * 
- * @version 1.0
- * @package Login
- * @author Pablo Alexander Mondragon Acevedo
- * @author Keiner Yamith Tarache Parra
- */
-
 session_start();
 
-// Conexión a la base de datos (ya existente)
+// Configuración de la base de datos
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "wikiprog";
 
+// Establecer conexión con la base de datos
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verificar la conexión
@@ -35,30 +16,66 @@ if ($conn->connect_error) {
 }
 
 // Obtener los datos del formulario
-$user = $_POST['username'] ?? '';
-$pass = $_POST['password'] ?? '';
-$seccion = $_POST['seccion'] ?? 'seccion1'; // Definir una sección por defecto si no se especifica
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
 
-// Proteger contra inyecciones SQL
-$user = $conn->real_escape_string($user);
-$pass = $conn->real_escape_string($pass);
+// Verificar si se han enviado datos de inicio de sesión
+if (!empty($username) && !empty($password)) {
+    // Consulta para obtener el usuario por nombre de usuario
+    $stmt = $conn->prepare("SELECT usuario_id, contraseña, intentos_fallidos FROM usuario WHERE usuario = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-// Consulta para verificar el usuario
-$sql = "SELECT usuario_id FROM usuario WHERE usuario = '$user' AND contraseña = '$pass'";
-$result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
 
-if ($result && $result->num_rows > 0) {
-    // Usuario encontrado, iniciar sesión
-    $row = $result->fetch_assoc();
-    $_SESSION['usuario_id'] = $row['usuario_id'];
-    $_SESSION['logged_in'] = true;  // Variable de sesión para el estado de inicio de sesión
-    
-    // Redireccionar a la sección correspondiente
-    header("Location: controlador.php?seccion=$seccion");
-    exit();
+        // Verificar si el usuario está bloqueado por intentos fallidos
+        if ($user['intentos_fallidos'] >= 3) {
+            // Usuario bloqueado
+            echo "Tu cuenta ha sido bloqueada debido a múltiples intentos fallidos. Por favor, contacta al administrador.";
+            exit();
+        }
+
+        // Verificar la contraseña
+        if ($password === $user['contraseña']) {
+            // Inicio de sesión exitoso
+            $_SESSION['usuario_id'] = $user['usuario_id'];
+            $_SESSION['logged_in'] = true;  // Variable de sesión para el estado de inicio de sesión
+            
+            // Reiniciar intentos fallidos
+            $stmt_reset_attempts = $conn->prepare("UPDATE usuario SET intentos_fallidos = 0 WHERE usuario_id = ?");
+            $stmt_reset_attempts->bind_param("i", $user['usuario_id']);
+            $stmt_reset_attempts->execute();
+            $stmt_reset_attempts->close();
+            
+            // Redireccionar a la sección correspondiente
+            header("Location: controlador.php?seccion=seccion1");
+            exit();
+        } else {
+            // Contraseña incorrecta
+            incrementarIntentosFallidos($conn, $user['usuario_id']);
+            header("Location: controlador.php?seccion=seccion2");
+            exit();
+        }
+    } else {
+        // Usuario no encontrado
+        echo "Usuario no encontrado: $username";
+    }
+
+    $stmt->close();
 } else {
-    // Usuario no encontrado, mostrar mensaje de error o redirigir a página de inicio de sesión con error
-    header("Location: controlador.php?seccion=seccion2&error=login");
-    exit();
+    // Datos de inicio de sesión no enviados
+    echo "Por favor, ingresa nombre de usuario y contraseña.";
+}
+
+$conn->close();
+
+// Función para incrementar los intentos fallidos del usuario
+function incrementarIntentosFallidos($conn, $usuario_id) {
+    $stmt_increment_attempts = $conn->prepare("UPDATE usuario SET intentos_fallidos = intentos_fallidos + 1 WHERE usuario_id = ?");
+    $stmt_increment_attempts->bind_param("i", $usuario_id);
+    $stmt_increment_attempts->execute();
+    $stmt_increment_attempts->close();
 }
 ?>

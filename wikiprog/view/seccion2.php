@@ -39,6 +39,12 @@
                             <a href="controlador.php?seccion=seccion5" class="btn btn-link">Registrarse</a>
                         </div>
                     </form>
+                    <!-- Mensaje de error -->
+                    <?php if (isset($_GET['error'])): ?>
+                        <div class="alert alert-danger mt-3" role="alert">
+                            <?php echo $_GET['error']; ?>
+                        </div>
+                    <?php endif; ?>
                     <!-- Fin del formulario -->
                 </div>
             </div>
