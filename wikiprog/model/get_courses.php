@@ -8,7 +8,6 @@
  *
  * @version 1.0
  * @author Pablo Alexander Mondragon Acevedo
- * @author Keiner Yamith Tarache Parra
  */
 
 // Configuración de la conexión a la base de datos

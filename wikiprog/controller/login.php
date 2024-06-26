@@ -13,7 +13,6 @@
  * @version 1.0
  * @package Login
  * @author Pablo Alexander Mondragon Acevedo
- *          Keiner Yamith Tarache Parra
  */
 class Login
 {

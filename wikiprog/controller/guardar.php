@@ -9,7 +9,6 @@
  *
  * @version 1.0
  * @author Pablo Alexander Mondragon Acevedo
- * @author Keiner Yamith Tarache Parra
  */
 
 // Verificamos si los datos del formulario han sido enviados correctamente
