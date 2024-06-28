@@ -13,28 +13,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario_correo = htmlspecialchars($_POST['correo'], ENT_QUOTES, 'UTF-8');
     $usuario_rango_id = $_POST['rango'];
 
-    // Conexión a la base de datos
-    $conexion = mysqli_connect("localhost", "root", "", "wikiprog");
+    // Incluir el archivo de configuración de la base de datos
+    include 'db_config.php';
 
-    // Verificar si la conexión es exitosa
-    if (!$conexion) {
-        die("Conexión fallida: " . mysqli_connect_error());
+    // Verificar la conexión
+    if ($conn->connect_error) {
+        die("Error de conexión: " . $conn->connect_error);
     }
 
     // Consulta SQL para actualizar los datos del usuario
     $sql = "UPDATE usuario SET usuario = '$usuario_nombre', correo = '$usuario_correo', rango_id = $usuario_rango_id WHERE usuario_id = $usuario_id";
 
     // Ejecución de la consulta
-    if ($conexion->query($sql) === TRUE) {
+    if ($conn->query($sql) === TRUE) {
         // Redirigir de vuelta a la página principal o a donde sea apropiado después de editar
         header("Location: ../controller/controlador.php?seccion=seccion6");
         exit();
     } else {
-        echo "Error al actualizar usuario: " . $conexion->error;
+        echo "Error al actualizar usuario: " . $conn->error;
     }
 
     // Cerrar la conexión
-    $conexion->close();
+    $conn->close();
 } else {
     // Si no es una petición POST, redirigir a alguna página de error o a donde sea apropiado
     header("Location: ../controller/controlador.php?seccion=seccion6");

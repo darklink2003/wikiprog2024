@@ -130,6 +130,7 @@ if (empty($usuario_id) && !in_array($seccion, $public_sections)) {
     </div>
 
     <!-- JavaScript -->
+    <script src="../js/scripts.js"></script>
     <script src="../js/perfil.js"></script>
     <script src="../js/funciones.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

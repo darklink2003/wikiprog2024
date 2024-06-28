@@ -1,5 +1,6 @@
 <?php
 /**
+ * db_config.php
  * Configuración de la base de datos.
  * 
  * Este script establece la conexión con la base de datos MySQL utilizando las credenciales proporcionadas.
@@ -7,7 +8,6 @@
  *
  * @version 1.0
  * @author Pablo Alexander Mondragon Acevedo
- * @author Keiner Yamith Tarache Parra
  */
 
 // Variables de configuración de la base de datos

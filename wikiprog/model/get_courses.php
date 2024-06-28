@@ -7,22 +7,11 @@
  * devuelve los datos obtenidos en formato JSON.
  *
  * @version 1.0
- * @author Pablo Alexander Mondragon Acevedo
+ * @autor Pablo Alexander Mondragon Acevedo
  */
 
-// Configuración de la conexión a la base de datos
-$servername = "localhost";  // Servidor de la base de datos
-$username = "root";         // Usuario de la base de datos
-$password = "";             // Contraseña de la base de datos
-$dbname = "wikiprog";       // Nombre de la base de datos
-
-// Crear conexión a la base de datos usando mysqli
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar si la conexión ha fallado
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Incluir el archivo de configuración de la base de datos
+include 'db_config.php';
 
 // Consulta SQL para obtener cursos
 $sql = "SELECT curso_id, titulo_curso, descripcion, categoria_id FROM curso";

@@ -24,19 +24,14 @@ if (!isset($_SESSION['usuario_id'])) {
     exit();
 }
 
-// Configuración de la conexión a la base de datos
-$servername = "localhost";  // Servidor de la base de datos
-$username = "root";         // Usuario de la base de datos
-$password = "";             // Contraseña de la base de datos
-$dbname = "wikiprog";       // Nombre de la base de datos
+// Incluir el archivo de configuración de la base de datos
+include '../model/db_config.php';
 
-// Crear conexión a la base de datos usando mysqli
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar si la conexión ha fallado
+// Verificar la conexión
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
+
 
 // Obtener el usuario_id de la sesión
 $usuario_id = $_SESSION['usuario_id'];

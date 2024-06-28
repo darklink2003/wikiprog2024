@@ -6,19 +6,14 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $id_usuario = $_GET['id'];
 
-// Conexión a la base de datos
-$conexion = mysqli_connect("localhost", "root", "", "wikiprog");
-
-// Verificar si la conexión es exitosa
-if (!$conexion) {
-    die("Conexión fallida: " . mysqli_connect_error());
-}
+// Incluir el archivo de configuración de la base de datos
+include '../model/db_config.php';
 
 // Consulta SQL para obtener los datos del usuario por su ID
 $sql = "SELECT usuario_id, usuario, correo, rango_id FROM usuario WHERE usuario_id = $id_usuario";
 
 // Ejecución de la consulta
-$resultado = $conexion->query($sql);
+$resultado = $conn->query($sql);
 
 // Verificar si se encontró el usuario
 if ($resultado->num_rows == 1) {
@@ -73,5 +68,5 @@ if ($resultado->num_rows == 1) {
 }
 
 // Cerrar la conexión
-$conexion->close();
+$conn->close();
 ?>

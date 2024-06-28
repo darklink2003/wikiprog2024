@@ -18,10 +18,7 @@
                     style="background-color: #1a1924; color: white; border-radius: 10px;">
                     <?php
                     // Conexión a la base de datos
-                    $conexion = new mysqli('localhost', 'root', '', 'wikiprog');
-                    if ($conexion->connect_error) {
-                        die("Error de conexión: " . $conexion->connect_error);
-                    }
+                    include '../model/db_config.php';
 
                     // Obtener las categorías
                     $sql = "SELECT categoria_id, descripcion FROM categoria";

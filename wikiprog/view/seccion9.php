@@ -11,14 +11,8 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 // Configuración de la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "wikiprog";
-
-// Crear conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
-
+// Incluir el archivo de configuración de la base de datos
+include '../model/db_config.php';
 // Verificar la conexión
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);

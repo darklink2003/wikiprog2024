@@ -1,5 +1,6 @@
 <?php
 /**
+ * registro.php
  * Procesamiento del formulario de registro de usuarios.
  *
  * Este archivo se encarga de gestionar la conexión a la base de datos,
@@ -13,63 +14,58 @@
  * @category Procesamiento
  * @package  WikiProg
  * @version  1.0
- * @author   Pablo Alexander Mondragon Acevedo
+ * @autor    Pablo Alexander Mondragon Acevedo
  *           Keiner Yamith Tarache Parra
  */
 
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "wikiprog";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar la conexión
-if ($conn->connect_error) {
-    die("La conexión ha fallado: " . $conn->connect_error);
-}
+// Incluir el archivo de configuración de la base de datos
+include '../model/db_config.php';
 
 // Obtener los datos del formulario de registro
-$user = $_POST['username'];
-$email = $_POST['email'];
-$bio = $_POST['biografia'];
-$pass = $_POST['password'];
+$user = trim($_POST['username']);
+$email = trim($_POST['email']);
+$bio = trim($_POST['biografia']);
+$pass = trim($_POST['password']);
+$terminos = isset($_POST['terminos']);
 
-// Proteger contra inyecciones SQL
-$user = $conn->real_escape_string($user);
-$email = $conn->real_escape_string($email);
-$bio = $conn->real_escape_string($bio);
-$pass = $conn->real_escape_string($pass);
-
-// Verificar si se aceptaron los términos y condiciones
-if (!isset($_POST['terminos'])) {
-    // Mostrar un mensaje de error y redirigir o manejar el error según la lógica de la aplicación
-    echo "Debes aceptar los términos y condiciones para registrarte.";
-    exit; // Detener la ejecución del script
+// Validación básica de los datos de entrada
+if (empty($user) || empty($email) || empty($bio) || empty($pass)) {
+    echo "Todos los campos son obligatorios.";
+    exit;
 }
 
-// Verificar si el usuario ya existe en la base de datos
-$sql = "SELECT * FROM usuario WHERE usuario = '$user' OR correo = '$email'";
-$result = $conn->query($sql);
+// Verificar si se aceptaron los términos y condiciones
+if (!$terminos) {
+    echo "Debes aceptar los términos y condiciones para registrarte.";
+    exit;
+}
+
+// Proteger contra inyecciones SQL y preparar la inserción de datos
+$stmt = $conn->prepare("SELECT * FROM usuario WHERE usuario = ? OR correo = ?");
+$stmt->bind_param("ss", $user, $email);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
-    // Usuario o correo ya están en uso
     echo "El nombre de usuario o el correo ya están en uso";
+    exit;
 } else {
-    // Insertar el nuevo usuario en la base de datos
-    $sql = "INSERT INTO usuario (usuario, correo, biografia, contraseña, rango_id) VALUES ('$user', '$email', '$bio', '$pass', 1)";
-    
-    if ($conn->query($sql) === TRUE) {
+    // Insertar el nuevo usuario en la base de datos sin encriptar la contraseña
+    $stmt = $conn->prepare("INSERT INTO usuario (usuario, correo, biografia, contraseña, rango_id) VALUES (?, ?, ?, ?, ?)");
+    $rango_id = 1; // Asignar el rango de usuario básico
+    $stmt->bind_param("ssssi", $user, $email, $bio, $pass, $rango_id);
+
+    if ($stmt->execute()) {
         // Registro exitoso, redirigir a la página de inicio de sesión
         echo "Registro exitoso. Puedes iniciar sesión ahora.";
         header("Location: ../index.php");
     } else {
         // Error al insertar en la base de datos
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
 }
 
 // Cerrar la conexión a la base de datos
+$stmt->close();
 $conn->close();
 ?>

@@ -1,13 +1,13 @@
 <?php
 /**
  * Clase Login para manejar operaciones relacionadas con usuarios en la base de datos.
- * 
+ * clase.php
  * Esta clase permite registrar nuevos usuarios y recuperar datos de usuarios existentes.
  * 
  * @version 1.0
- * @autor Pablo Alexander Mondragon Acevedo
- * @autor Keiner Yamith Tarache Parra
+ * @author Pablo Alexander Mondragon Acevedo
  */
+
 class Login
 {
     /**
@@ -21,18 +21,18 @@ class Login
      */
     public static function registrar($usuario, $correo, $contraseña, $rango_id)
     {
-        // Conexión a la base de datos
-        $conexion = mysqli_connect("localhost", "root", "", "wikiprog");
+        // Incluir la configuración de la base de datos
+        include 'db_config.php';
 
-        // Consulta SQL para insertar un nuevo usuario en la tabla 'tb_usuarios'
-        $sql = "INSERT INTO tb_usuarios(usuario, correo, contraseña, rango_id) VALUES ('$usuario', '$correo', '$contraseña', '$rango_id')";
+        // Consulta SQL para insertar un nuevo usuario en la tabla 'usuario'
+        $sql = "INSERT INTO usuario (usuario, correo, contraseña, rango_id) VALUES ('$usuario', '$correo', '$contraseña', '$rango_id')";
 
         // Ejecución de la consulta
-        $consulta = $conexion->query($sql);
+        $consulta = $conn->query($sql);
 
         // Redirección si la consulta se ejecuta correctamente
         if ($consulta) {
-            header("location: ../controller/controlador.php?seccion=seccion6");
+            header("Location: ../controller/controlador.php?seccion=seccion6");
         }
     }
 
@@ -43,26 +43,21 @@ class Login
      */
     public static function verusuarios()
     {
+        // Incluir la configuración de la base de datos
+        include 'db_config.php';
+
         // Variable para almacenar la salida
         $salida = "";
 
-        // Conexión a la base de datos
-        $conexion = mysqli_connect("localhost", "root", "", "wikiprog");
-
-        // Verificar si la conexión es exitosa
-        if (!$conexion) {
-            die("Conexión fallida: " . mysqli_connect_error());
-        }
-
         // Consulta SQL para seleccionar todos los usuarios de la tabla 'usuario'
-        $sql = "SELECT usuario_id, usuario, correo, contraseña, rango_id FROM usuario";
+        $sql = "SELECT usuario_id, usuario, correo, contraseña, rango_id, intentos_fallidos, cuenta_bloqueada FROM usuario";
 
         // Ejecución de la consulta
-        $consulta = $conexion->query($sql);
+        $consulta = $conn->query($sql);
 
         // Verificar si la consulta fue exitosa
         if (!$consulta) {
-            die("Error en la consulta: " . $conexion->error);
+            die("Error en la consulta: " . $conn->query($sql));
         }
 
         // Construcción de la tabla HTML con los datos de los usuarios
@@ -74,6 +69,8 @@ class Login
         $salida .= '<th scope="col">Usuario</th>';
         $salida .= '<th scope="col">Correo</th>';
         $salida .= '<th scope="col">Rango</th>';
+        $salida .= '<th scope="col">Numero de intentos</th>';
+        $salida .= '<th scope="col">Estado de la cuenta</th>';
         $salida .= '<th scope="col">Editar</th>';
         $salida .= '<th scope="col">Eliminar</th>';
         $salida .= '</tr>';
@@ -94,6 +91,8 @@ class Login
             $salida .= '<td>' . htmlspecialchars($fila['usuario'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . htmlspecialchars($fila['correo'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . $rango_texto . '</td>';
+            $salida .= '<td>' . htmlspecialchars($fila['intentos_fallidos'], ENT_QUOTES, 'UTF-8') . '</td>';
+            $salida .= '<td>' . htmlspecialchars($fila['cuenta_bloqueada'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td><a href="../controller/controlador.php?seccion=seccion13&id=' . $usuario_id . '" class="btn btn-primary btn-sm">Editar</a></td>';
             $salida .= '<td><a href="../model/eliminar.php?id=' . $usuario_id . '" class="btn btn-danger btn-sm">Eliminar</a></td>';
             $salida .= '</tr>';
@@ -105,36 +104,37 @@ class Login
         $salida .= '</div>'; // Cerrar el div container-fluid
 
         // Cerrar la conexión
-        $conexion->close();
+        $conn->close();
 
         // Retornar la salida
         return $salida;
     }
+
+    /**
+     * Recupera y muestra los datos de todos los cursos registrados en la base de datos.
+     *
+     * @return string Cadena de texto con los datos de todos los cursos.
+     */
     public static function vercursos()
     {
+        // Incluir la configuración de la base de datos
+        include 'db_config.php';
+
         // Variable para almacenar la salida
         $salida = "";
 
-        // Conexión a la base de datos
-        $conexion = mysqli_connect("localhost", "root", "", "wikiprog");
-
-        // Verificar si la conexión es exitosa
-        if (!$conexion) {
-            die("Conexión fallida: " . mysqli_connect_error());
-        }
-
-        // Consulta SQL para seleccionar todos los usuarios de la tabla 'usuario'
+        // Consulta SQL para seleccionar todos los cursos de la tabla 'curso'
         $sql = "SELECT curso_id, titulo_curso, descripcion, categoria_id, fecha_registro, megusta, dislike, usuario_id FROM curso";
 
         // Ejecución de la consulta
-        $consulta = $conexion->query($sql);
+        $consulta = $conn->query($sql);
 
         // Verificar si la consulta fue exitosa
         if (!$consulta) {
-            die("Error en la consulta: " . $conexion->error);
+            die("Error en la consulta: " . $conn->query($sql));
         }
 
-        // Construcción de la tabla HTML con los datos de los usuarios
+        // Construcción de la tabla HTML con los datos de los cursos
         $salida = '<div class="container-fluid" style="max-width:400vh;">';
         $salida .= '<div class="table-responsive">';
         $salida .= '<table class="table table-striped table-hover table-bordered">';
@@ -154,16 +154,16 @@ class Login
         $salida .= '<tbody>';
 
         while ($fila = $consulta->fetch_assoc()) {
-            $usuario_id = $fila['curso_id']; // Obtener el id del usuario
+            $curso_id = $fila['curso_id']; // Obtener el id del curso
 
-            // Asignar texto correspondiente al rango_id
+            // Asignar texto correspondiente al categoria_id
             $categoria_texto = isset($fila["categoria_id"]) ?
-                ($fila["categoria_id"] == 1 ? "Codigo" :
-                    ($fila["categoria_id"] == 2 ? "logica del programador" :
-                        ($fila["categoria_id"] == 3 ? "estilo" :
-                            ($fila["categoria_id"] == 4 ? "base de datos" :
-                                ($fila["categoria_id"] == 5 ? "otro" :
-                                    ($fila["categoria_id"] == 3 ? "jax" : "Desconocido"))))))
+                ($fila["categoria_id"] == 1 ? "Código" :
+                    ($fila["categoria_id"] == 2 ? "Lógica del programador" :
+                        ($fila["categoria_id"] == 3 ? "Estilo" :
+                            ($fila["categoria_id"] == 4 ? "Base de datos" :
+                                ($fila["categoria_id"] == 5 ? "Otro" :
+                                    ($fila["categoria_id"] == 6 ? "AJAX" : "Desconocido"))))))
                 : "Desconocido";
 
             $salida .= '<tr>';
@@ -174,8 +174,8 @@ class Login
             $salida .= '<td>' . htmlspecialchars($fila['megusta'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . htmlspecialchars($fila['dislike'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . htmlspecialchars($fila['usuario_id'], ENT_QUOTES, 'UTF-8') . '</td>';
-            $salida .= '<td><a href="../controller/controlador.php?seccion=seccion13&id=' . $usuario_id . '" class="btn btn-primary btn-sm">Editar</a></td>';
-            $salida .= '<td><a href="../model/eliminar.php?id=' . $usuario_id . '" class="btn btn-danger btn-sm">Eliminar</a></td>';
+            $salida .= '<td><a href="../controller/controlador.php?seccion=seccion13&id=' . $curso_id . '" class="btn btn-primary btn-sm">Editar</a></td>';
+            $salida .= '<td><a href="../model/eliminar.php?id=' . $curso_id . '" class="btn btn-danger btn-sm">Eliminar</a></td>';
             $salida .= '</tr>';
         }
 
@@ -185,12 +185,10 @@ class Login
         $salida .= '</div>'; // Cerrar el div container-fluid
 
         // Cerrar la conexión
-        $conexion->close();
+        $conn->close();
 
         // Retornar la salida
         return $salida;
     }
-
-
 }
 ?>

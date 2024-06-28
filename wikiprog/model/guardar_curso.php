@@ -1,5 +1,6 @@
 <?php
 /**
+ * guardar_curso.php
  * Procesa el formulario para agregar un nuevo curso con sus respectivas lecciones y archivos.
  * 
  * Este script recibe datos del formulario POST para agregar un nuevo curso a la base de datos 'wikiprog'.
@@ -75,10 +76,7 @@ if (!in_array($rango_id_usuario, $rango_id_permitidos)) {
 }
 
 // Conexión a la base de datos
-$conexion = new mysqli('localhost', 'root', '', 'wikiprog');
-if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
-}
+include 'db_config.php';
 
 // Verificar si la categoría existe
 $sql_categoria = "SELECT categoria_id FROM categoria WHERE categoria_id = ?";

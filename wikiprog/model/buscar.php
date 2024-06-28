@@ -10,19 +10,7 @@
  * @author Tu Nombre
  */
 
-// Configuración de la conexión a la base de datos
-$servername = "localhost";  // Servidor de la base de datos
-$username = "root";         // Usuario de la base de datos
-$password = "";             // Contraseña de la base de datos
-$dbname = "wikiprog";       // Nombre de la base de datos
-
-// Crear conexión a la base de datos usando mysqli
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar si la conexión ha fallado
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'db_config.php';  // Incluir archivo de configuración de la base de datos
 
 // Obtener el término de búsqueda desde el parámetro GET 'q'
 $searchTerm = $_GET['q'] ?? '';
