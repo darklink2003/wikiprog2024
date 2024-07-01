@@ -22,7 +22,7 @@
 
                     // Obtener las categorías
                     $sql = "SELECT categoria_id, descripcion FROM categoria";
-                    $resultado = $conexion->query($sql);
+                    $resultado = $conn->query($sql);
 
                     if ($resultado->num_rows > 0) {
                         while ($row = $resultado->fetch_assoc()) {
@@ -31,7 +31,7 @@
                     }
 
                     // Cerrar la conexión
-                    $conexion->close();
+                    $conn->close();
                     ?>
                 </select>
                 <button type="button" onclick="eliminarCurso()" class="btn btn-danger"

@@ -94,8 +94,9 @@ if (empty($usuario_id) && !in_array($seccion, $public_sections)) {
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item" href="controlador.php?seccion=seccion2"><b>Iniciar Sesión</b></a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#"><b>ESTADO</b>
-                                <?php echo isset($_SESSION['usuario_id']) ? 'Activo' : 'Inactivo'; ?></a></li>
+                            <li><b>ESTADO</b>
+                                <?php echo isset($_SESSION['usuario_id']) ? 'Activo' : 'Inactivo'; ?>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="controlador.php?seccion=seccion9">Tu Perfil</a></li>
                             <li><a class="dropdown-item" href="controlador.php?seccion=seccion6">Lista De Usuarios</a></li>

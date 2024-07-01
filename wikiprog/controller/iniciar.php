@@ -1,3 +1,4 @@
+<!-- iniciar.php -->
 <?php
 session_start();
 

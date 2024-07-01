@@ -1,17 +1,4 @@
 <?php
-/**
- * actualizar_datos.php
- * Script para actualizar los datos del perfil de un usuario en la base de datos.
- * 
- * Este script verifica si el usuario está autenticado, obtiene los datos del formulario,
- * valida los datos, maneja la carga de una imagen de perfil y actualiza la información
- * en la base de datos. Si hay errores, los almacena en la sesión y redirige a una página
- * de errores. Si la actualización es exitosa, redirige a una página de éxito.
- * 
- * @version 1.0
- * @autor Tu Nombre
- */
-
 // Inicia la sesión si no está activa
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -19,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Verificar si el usuario está autenticado
 if (!isset($_SESSION['usuario_id'])) {
-    // Redirigir a la página de login si el usuario no está autenticado
     header("Location: ../controller/controlador.php?seccion=seccion2&error=not_logged_in");
     exit();
 }
@@ -88,10 +74,16 @@ if (count($errores) > 0) {
     exit();
 }
 
-// Actualizar datos en la base de datos
-$sql = "UPDATE usuario SET usuario = ?, correo = ?, biografia = ?, img_usuario = ? WHERE usuario_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ssssi", $nombre, $correo, $biografia, $nombre_archivo, $usuario_id);
+// Consulta SQL para actualizar datos en la base de datos
+if (!empty($nombre_archivo)) {
+    $sql = "UPDATE usuario SET usuario = ?, correo = ?, biografia = ?, img_usuario = ? WHERE usuario_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssssi", $nombre, $correo, $biografia, $nombre_archivo, $usuario_id);
+} else {
+    $sql = "UPDATE usuario SET usuario = ?, correo = ?, biografia = ? WHERE usuario_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssi", $nombre, $correo, $biografia, $usuario_id);
+}
 
 // Ejecutar la actualización y verificar si tuvo éxito
 if ($stmt->execute()) {
