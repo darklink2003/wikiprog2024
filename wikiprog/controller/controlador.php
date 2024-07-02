@@ -26,7 +26,7 @@ if (isset($_GET['seccion'])) {
     // Validar que la sección exista para evitar vulnerabilidades de inclusión de archivos
     $secciones_disponibles = [
         'seccion1','seccion2', 'seccion3', 'seccion4', 'seccion5', 'seccion6', 'seccion7',
-        'seccion8', 'seccion9', 'seccion10', 'seccion11', 'seccion12', 'seccion13'
+        'seccion8', 'seccion9', 'seccion10', 'seccion11', 'seccion12', 'seccion13', 'seccion14'
     ];
 
     // Verificar si la sección solicitada está en el arreglo de secciones disponibles

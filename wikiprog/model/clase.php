@@ -45,21 +45,17 @@ class Login
     {
         // Incluir la configuración de la base de datos
         include 'db_config.php';
-
+    
         // Variable para almacenar la salida
         $salida = "";
-
+    
         // Consulta SQL para seleccionar todos los usuarios de la tabla 'usuario'
-        $sql = "SELECT usuario_id, usuario, correo, contraseña, rango_id, intentos_fallidos, cuenta_bloqueada FROM usuario";
-
+        $sql = "SELECT usuario_id, usuario, img_usuario, correo, biografia, rango_id, intentos_fallidos, cuenta_bloqueada FROM usuario";
+    
         // Ejecución de la consulta
         $consulta = $conn->query($sql);
-
-        // Verificar si la consulta fue exitosa
-        if (!$consulta) {
-            die("Error en la consulta: " . $conn->query($sql));
-        }
-
+    
+    
         // Construcción de la tabla HTML con los datos de los usuarios
         $salida = '<div class="container-fluid" style="max-width:400vh;">';
         $salida .= '<div class="table-responsive">';
@@ -67,49 +63,56 @@ class Login
         $salida .= '<thead class="table-dark">';
         $salida .= '<tr>';
         $salida .= '<th scope="col">Usuario</th>';
+        $salida .= '<th scope="col">Imagen</th>';
         $salida .= '<th scope="col">Correo</th>';
+        $salida .= '<th scope="col">Biografía</th>';
         $salida .= '<th scope="col">Rango</th>';
-        $salida .= '<th scope="col">Numero de intentos</th>';
-        $salida .= '<th scope="col">Estado de la cuenta</th>';
+        $salida .= '<th scope="col">Intentos Fallidos</th>';
+        $salida .= '<th scope="col">Cuenta Bloqueada</th>';
         $salida .= '<th scope="col">Editar</th>';
         $salida .= '<th scope="col">Eliminar</th>';
         $salida .= '</tr>';
         $salida .= '</thead>';
         $salida .= '<tbody>';
-
+    
         while ($fila = $consulta->fetch_assoc()) {
             $usuario_id = $fila['usuario_id']; // Obtener el id del usuario
-
+    
             // Asignar texto correspondiente al rango_id
             $rango_texto = isset($fila["rango_id"]) ?
                 ($fila["rango_id"] == 1 ? "Usuario" :
                     ($fila["rango_id"] == 2 ? "Administrador" :
                         ($fila["rango_id"] == 3 ? "Evaluador" : "Desconocido")))
                 : "Desconocido";
-
+    
+            // Convertir el valor de cuenta_bloqueada a texto
+            $cuenta_bloqueada_texto = $fila['cuenta_bloqueada'] ? "Sí" : "No";
+    
             $salida .= '<tr>';
             $salida .= '<td>' . htmlspecialchars($fila['usuario'], ENT_QUOTES, 'UTF-8') . '</td>';
+            $salida .= '<td>' . htmlspecialchars($fila['img_usuario'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . htmlspecialchars($fila['correo'], ENT_QUOTES, 'UTF-8') . '</td>';
+            $salida .= '<td>' . htmlspecialchars($fila['biografia'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . $rango_texto . '</td>';
             $salida .= '<td>' . htmlspecialchars($fila['intentos_fallidos'], ENT_QUOTES, 'UTF-8') . '</td>';
-            $salida .= '<td>' . htmlspecialchars($fila['cuenta_bloqueada'], ENT_QUOTES, 'UTF-8') . '</td>';
+            $salida .= '<td>' . $cuenta_bloqueada_texto . '</td>';
             $salida .= '<td><a href="../controller/controlador.php?seccion=seccion13&id=' . $usuario_id . '" class="btn btn-primary btn-sm">Editar</a></td>';
             $salida .= '<td><a href="../model/eliminar.php?id=' . $usuario_id . '" class="btn btn-danger btn-sm">Eliminar</a></td>';
             $salida .= '</tr>';
         }
-
+    
         $salida .= '</tbody>';
         $salida .= '</table>';
         $salida .= '</div>'; // Cerrar el div table-responsive
         $salida .= '</div>'; // Cerrar el div container-fluid
-
+    
         // Cerrar la conexión
         $conn->close();
-
+    
         // Retornar la salida
         return $salida;
     }
-
+    
     /**
      * Recupera y muestra los datos de todos los cursos registrados en la base de datos.
      *
@@ -174,8 +177,8 @@ class Login
             $salida .= '<td>' . htmlspecialchars($fila['megusta'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . htmlspecialchars($fila['dislike'], ENT_QUOTES, 'UTF-8') . '</td>';
             $salida .= '<td>' . htmlspecialchars($fila['usuario_id'], ENT_QUOTES, 'UTF-8') . '</td>';
-            $salida .= '<td><a href="../controller/controlador.php?seccion=seccion13&id=' . $curso_id . '" class="btn btn-primary btn-sm">Editar</a></td>';
-            $salida .= '<td><a href="../model/eliminar.php?id=' . $curso_id . '" class="btn btn-danger btn-sm">Eliminar</a></td>';
+            $salida .= '<td><a href="../controller/controlador.php?seccion=seccion14&id=' . $curso_id . '" class="btn btn-primary btn-sm">Editar</a></td>';
+            $salida .= '<td><a href="../model/eliminar_curso.php?id=' . $curso_id . '" class="btn btn-danger btn-sm">Eliminar</a></td>';
             $salida .= '</tr>';
         }
 

@@ -119,12 +119,12 @@ if (empty($usuario_id) && !in_array($seccion, $public_sections)) {
 
 
     <!-- Contenido de la sección -->
-    <div class="container" style="margin-top:10px;">
+    <div class="container" style="margin-top:50px;">
         <?php include ($seccion . ".php"); ?>
     </div>
 
     <!-- Pie de página -->
-    <div class="container">
+    <div class="container2" style="margin-top:50px;">
         <footer>
             <p>© WikiProg 2024</p>
         </footer>

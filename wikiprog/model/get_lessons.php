@@ -1,5 +1,6 @@
 <?php
 /**
+ * get_lessosns.php
  * Consulta y devuelve las lecciones asociadas a un curso específico en formato JSON.
  * 
  * Este script realiza una conexión a la base de datos MySQL ('wikiprog'), verifica la conexión,
@@ -10,7 +11,6 @@
  *
  * @version 1.0
  * @author Pablo Alexander Mondragon Acevedo
- * @author Keiner Yamith Tarache Parra
  */
 
     // Incluir el archivo de configuración de la base de datos

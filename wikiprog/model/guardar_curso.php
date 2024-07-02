@@ -80,7 +80,7 @@ include 'db_config.php';
 
 // Verificar si la categoría existe
 $sql_categoria = "SELECT categoria_id FROM categoria WHERE categoria_id = ?";
-$stmt_categoria = $conexion->prepare($sql_categoria);
+$stmt_categoria = $conn->prepare($sql_categoria);
 $stmt_categoria->bind_param("i", $categoria_id);
 $stmt_categoria->execute();
 $stmt_categoria->store_result();
@@ -88,7 +88,7 @@ $stmt_categoria->store_result();
 if ($stmt_categoria->num_rows == 0) {
     echo "Error: La categoría seleccionada no existe.";
     $stmt_categoria->close();
-    $conexion->close();
+    $conn->close();
     exit();
 }
 $stmt_categoria->close();
@@ -119,14 +119,14 @@ foreach ($archivos_leccion['tmp_name'] as $index => $tmpName) {
 }
 
 // Iniciar una transacción
-$conexion->begin_transaction();
+$conn->begin_transaction();
 
 try {
     // Insertar los datos en la tabla curso
     $sql_curso = "INSERT INTO curso (titulo_curso, descripcion, categoria_id, usuario_id) VALUES (?, ?, ?, ?)";
-    $stmt_curso = $conexion->prepare($sql_curso);
+    $stmt_curso = $conn->prepare($sql_curso);
     if (!$stmt_curso) {
-        throw new Exception("Error en la preparación de la consulta de curso: " . $conexion->error);
+        throw new Exception("Error en la preparación de la consulta de curso: " . $conn->error);
     }
     $stmt_curso->bind_param("ssii", $titulo_curso, $descripcion, $categoria_id, $usuario_id);
     $stmt_curso->execute();
@@ -135,13 +135,13 @@ try {
     }
 
     // Obtener el ID del curso recién insertado
-    $curso_id = $conexion->insert_id;
+    $curso_id = $conn->insert_id;
 
     // Insertar los datos en la tabla lección
     $sql_leccion = "INSERT INTO leccion (curso_id, titulo_leccion, contenido, archivo_leccion) VALUES (?, ?, ?, ?)";
-    $stmt_leccion = $conexion->prepare($sql_leccion);
+    $stmt_leccion = $conn->prepare($sql_leccion);
     if (!$stmt_leccion) {
-        throw new Exception("Error en la preparación de la consulta de lección: " . $conexion->error);
+        throw new Exception("Error en la preparación de la consulta de lección: " . $conn->error);
     }
 
     // Iterar sobre las lecciones y guardarlas
@@ -157,12 +157,12 @@ try {
     }
 
     // Confirmar la transacción
-    $conexion->commit();
+    $conn->commit();
     // Redirigir a otra página si es necesario
     header("Location: ../index.php");
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
-    $conexion->rollback();
+    $conn->rollback();
     echo "Error al guardar el curso y las lecciones: " . $e->getMessage();
 }
 
@@ -173,5 +173,5 @@ if (isset($stmt_curso)) {
 if (isset($stmt_leccion)) {
     $stmt_leccion->close();
 }
-$conexion->close();
+$conn->close();
 ?>
