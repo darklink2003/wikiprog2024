@@ -2,6 +2,7 @@
  * Este script se ejecuta cuando el DOM ha sido completamente cargado.
  * Carga la información del curso, las lecciones y los comentarios relacionados con un curso específico.
  */
+
 document.addEventListener('DOMContentLoaded', function () {
     // Obtener parámetros de la URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -13,16 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Cargar lecciones del curso
     cargarLecciones(cursoId);
 
-    // Cargar comentarios del curso
 
-    // Obtener el formulario de comentario
-    const formularioComentario = document.getElementById('formulario-comentario');
-
-    // Agregar evento de envío de formulario
-    formularioComentario.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevenir el envío del formulario por defecto
-        enviarComentario(cursoId); // Llamar a la función para enviar el comentario
-    });
 
     /**
      * Función para cargar la información del curso desde el servidor.
@@ -49,6 +41,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     infoCursoContainer.appendChild(tituloCurso);
                     infoCursoContainer.appendChild(categoriaCurso);
                     infoCursoContainer.appendChild(descripcionCurso);
+
+                    // Agregar enlace para inscripción
+                    const enlaceInscripcion = document.createElement('a');
+                    enlaceInscripcion.textContent = 'Inscribirse';
+                    enlaceInscripcion.href = `../controller/controlador.php?seccion=seccion8&curso_id=${curso.curso_id}`;
+                    enlaceInscripcion.classList.add('btn', 'btn-primary', 'mt-3'); // Clases de Bootstrap para botón
+                    infoCursoContainer.appendChild(enlaceInscripcion);
                 } else {
                     console.error('No se encontró el curso con curso_id:', cursoId);
                 }
@@ -107,14 +106,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    /**
-     * Función para enviar un comentario relacionado con un curso.
-     * @param {number} cursoId - ID del curso al que pertenece el comentario.
-     */
-    function enviarComentario(cursoId) {
-        // Implementación del envío de comentario, no proporcionada en este fragmento.
-        // Se asume que esta función enviará el comentario al servidor y actualizará la lista de comentarios.
-        console.log('Enviar comentario para curso con ID:', cursoId);
-    }
+
 
 });

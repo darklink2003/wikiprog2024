@@ -1,7 +1,7 @@
 <?php
 /**
  * Este script inicia la sesión y gestiona la carga dinámica de secciones.
- * 
+ * controlador.php
  * Sección por defecto: 'seccion2'. Si se proporciona una sección válida a través de GET,
  * se carga esa sección. Finalmente, se incluye la plantilla 'plantilla.php' para la interfaz.
  *

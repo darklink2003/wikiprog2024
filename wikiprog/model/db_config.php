@@ -1,6 +1,6 @@
 <?php
 /**
- * db_config.php
+ * ../model/db_config.php
  * Configuración de la base de datos.
  * 
  * Este script establece la conexión con la base de datos MySQL utilizando las credenciales proporcionadas.

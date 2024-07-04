@@ -1,34 +1,29 @@
-<?php
-// Inicia la sesión si no está activa
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+<div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Formulario de Inscripción
+                    </div>
+                    <div class="card-body">
+                        <form action="procesar_inscripcion.php" method="POST">
+                            <div class="form-group">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="correo">Correo Electrónico:</label>
+                                <input type="email" class="form-control" id="correo" name="correo" required>
+                            </div>
 
-// Verificar si el usuario está autenticado
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: ../controller/controlador.php?seccion=seccion2&error=not_logged_in");
-    exit();
-}
-?>
-<div class="container">
-    <h1>Formulario de inscripción</h1>
-
-    <form action="#">
-      <div class="form-group">
-        <label for="nombre">Nombre completo:</label>
-        <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre completo">
-      </div>
-
-      <div class="form-group">
-        <label for="correo">Correo electrónico:</label>
-        <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo electrónico">
-      </div>
-
-      <div class="form-group">
-        <label for="contrasena">Contraseña:</label>
-        <input type="password" class="form-control" id="contrasena" placeholder="Ingrese su contraseña">
-      </div>
-
-      <button type="submit" class="btn btn-primary">Registrarse</button>
-    </form>
-  </div>
+                            <div class="form-group">
+                                <label for="curso">Curso de Interés:</label>
+                                <p>nombre del curso</p>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar Inscripción</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

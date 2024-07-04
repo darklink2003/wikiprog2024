@@ -1,7 +1,7 @@
 <?php
 /**
  * Controlador principal de la aplicación.
- *
+ *plantilla.php
  * Este archivo gestiona el enrutamiento y la seguridad de las secciones del sitio web.
  *
  * PHP version 7.4
@@ -20,12 +20,15 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Obtener la sección de la URL, si no está presente, se usa 'seccion1' como predeterminada
 $seccion = $_GET['seccion'] ?? 'seccion1';
+// Limpiar el nombre de la sección para evitar inclusiones maliciosas
+$seccion = preg_replace('/[^a-zA-Z0-9_]/', '', $seccion);
 // Obtener el ID de usuario de la sesión, si no está iniciada, se establece como vacío
 $usuario_id = $_SESSION['usuario_id'] ?? '';
 
 // Redirigir a la página de inicio de sesión si no ha iniciado sesión y trata de acceder a una sección restringida
 $public_sections = ['seccion5', 'seccion2']; // Agregar aquí las secciones públicas
 if (empty($usuario_id) && !in_array($seccion, $public_sections)) {
+    session_regenerate_id(true); // Regenerar ID de sesión para seguridad adicional
     header("Location: controlador.php?seccion=seccion2");
     exit();
 }
@@ -54,7 +57,6 @@ if (empty($usuario_id) && !in_array($seccion, $public_sections)) {
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-
         gtag('config', 'G-GQJG3209SE');
     </script>
 </head>
@@ -116,11 +118,9 @@ if (empty($usuario_id) && !in_array($seccion, $public_sections)) {
     </nav>
 <?php endif; ?>
 
-
-
     <!-- Contenido de la sección -->
     <div class="container" style="margin-top:50px;">
-        <?php include ($seccion . ".php"); ?>
+        <?php include($seccion . ".php"); ?>
     </div>
 
     <!-- Pie de página -->
@@ -131,6 +131,7 @@ if (empty($usuario_id) && !in_array($seccion, $public_sections)) {
     </div>
 
     <!-- JavaScript -->
+     <script src="comentario.js"></script>
     <script src="../js/scripts.js"></script>
     <script src="../js/perfil.js"></script>
     <script src="../js/funciones.js"></script>
